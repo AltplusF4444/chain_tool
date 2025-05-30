@@ -58,5 +58,7 @@ class BlockchainToolkit:
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
             return receipt
         else:
-            result = func(*args).call()
+            result = func(*args).call({
+                'from': self.w3.eth.default_account
+            })
             return result
