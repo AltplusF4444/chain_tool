@@ -34,11 +34,8 @@ class BlockchainToolkit:
     def call_contract_function(
         self,
         func_name: str,
-        args: dict,
+        args: tuple,
         is_transaction: bool = False,
-        aes_key: bytes = None,
-        encrypt_fields: list[str] = None,
-        decrypt_return: bool = False
     ):
         """
         Вызывает функцию контракта.
@@ -46,29 +43,18 @@ class BlockchainToolkit:
         :param func_name: Имя функции
         :param args: Параметры функции (dict)
         :param is_transaction: True — если транзакция, False — вызов метода
-        :param aes_key: Ключ для шифрования/расшифровки
-        :param encrypt_fields: Поля, которые нужно зашифровать перед отправкой
-        :param decrypt_return: Расшифровать ли возвращаемые данные
         :return: Ответ от контракта
         """
 
         if not hasattr(self.contract.functions, func_name):
             raise AttributeError(f"Функция '{func_name}' не существует в контракте.")
 
-        # Шифруем указанные поля
-        if encrypt_fields and aes_key:
-            for field in encrypt_fields:
-                if field in args:
-                    args[field] = self.encrypt_data(aes_key, args[field])
-
         func = getattr(self.contract.functions, func_name)
 
         if is_transaction:
-            tx_hash = func(**args).transact()
+            tx_hash = func(*args).transact()
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
             return receipt
         else:
-            result = func(**args).call()
-            if decrypt_return and aes_key and isinstance(result, str) and result.startswith('g'):
-                return self.decrypt_data(aes_key, result)
+            result = func(*args).call()
             return result
