@@ -52,7 +52,9 @@ class BlockchainToolkit:
         func = getattr(self.contract.functions, func_name)
 
         if is_transaction:
-            tx_hash = func(*args).transact()
+            tx_hash = func(*args).transact({
+                'from': self.w3.eth.default_account
+            })
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
             return receipt
         else:
