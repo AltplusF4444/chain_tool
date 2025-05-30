@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="blockchain_toolkit",
-    version="0.2.0",
+    version="0.2.1",
     author="AltF4444",
     description="Универсальная библиотека для взаимодействия с Ethereum-блокчейном с поддержкой AES-шифрования.",
     long_description=long_description,
